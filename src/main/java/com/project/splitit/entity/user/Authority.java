@@ -1,5 +1,6 @@
-package entity;
+package com.project.splitit.entity.user;
 
+import com.project.splitit.entity.common.BaseEntity;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 import org.springframework.security.core.GrantedAuthority;

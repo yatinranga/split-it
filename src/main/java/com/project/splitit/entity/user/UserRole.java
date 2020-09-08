@@ -1,16 +1,18 @@
-package entity;
+package com.project.splitit.entity.user;
 
+import com.project.splitit.entity.common.UserRoleKey;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
+import java.io.Serializable;
 
 @SuppressWarnings("serial")
 @Entity
 @Table(name = "user_role")
 @DynamicInsert(value = true)
 @DynamicUpdate(value = true)
-public class UserRole {
+public class UserRole implements Serializable {
 
     @EmbeddedId
     private UserRoleKey userRoleKey;

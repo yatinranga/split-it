@@ -1,10 +1,12 @@
-package entity;
+package com.project.splitit.entity.user;
 
+import com.project.splitit.entity.common.BaseEntity;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
+import java.io.Serializable;
 import java.util.List;
 
 @SuppressWarnings("serial")
@@ -12,7 +14,7 @@ import java.util.List;
 @Table(name = "role")
 @DynamicInsert(value = true)
 @DynamicUpdate(value = true)
-public class Role extends BaseEntity{
+public class Role extends BaseEntity implements Serializable {
 
     @NotEmpty(message = "name can't be empty")
     @Column(name = "name")

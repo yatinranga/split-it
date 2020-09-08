@@ -1,23 +1,23 @@
-package entity;
-
+package com.project.splitit.entity.common;
 
 import javax.persistence.Embeddable;
+import java.io.Serializable;
 
-@SuppressWarnings("serial")
 @Embeddable
-public class RoleAuthorityKey {
+public class UserRoleKey implements Serializable {
 
     private Long roleId;
-    private Long authorityId;
+    private Long userId;
 
-    public RoleAuthorityKey() {
+    public UserRoleKey() {
+        super();
     }
 
-    public RoleAuthorityKey(Long roleId, Long authorityId) {
+    public UserRoleKey(Long roleId, Long userId) {
+        super();
         this.roleId = roleId;
-        this.authorityId = authorityId;
+        this.userId = userId;
     }
-
 
     public Long getRoleId() {
         return roleId;
@@ -27,20 +27,20 @@ public class RoleAuthorityKey {
         this.roleId = roleId;
     }
 
-    public Long getAuthorityId() {
-        return authorityId;
+    public Long getUserId() {
+        return userId;
     }
 
-    public void setAuthorityId(Long authorityId) {
-        this.authorityId = authorityId;
+    public void setUserId(Long userId) {
+        this.userId = userId;
     }
 
     @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((authorityId == null) ? 0 : authorityId.hashCode());
         result = prime * result + ((roleId == null) ? 0 : roleId.hashCode());
+        result = prime * result + ((userId == null) ? 0 : userId.hashCode());
         return result;
     }
 
@@ -52,16 +52,16 @@ public class RoleAuthorityKey {
             return false;
         if (getClass() != obj.getClass())
             return false;
-        RoleAuthorityKey other = (RoleAuthorityKey) obj;
-        if (authorityId == null) {
-            if (other.authorityId != null)
-                return false;
-        } else if (!authorityId.equals(other.authorityId))
-            return false;
+        UserRoleKey other = (UserRoleKey) obj;
         if (roleId == null) {
             if (other.roleId != null)
                 return false;
         } else if (!roleId.equals(other.roleId))
+            return false;
+        if (userId == null) {
+            if (other.userId != null)
+                return false;
+        } else if (!userId.equals(other.userId))
             return false;
         return true;
     }

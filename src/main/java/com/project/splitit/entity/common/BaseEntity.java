@@ -1,10 +1,12 @@
-package entity;
+package com.project.splitit.entity.common;
+
+import com.project.splitit.entity.user.User;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
 
-@Entity
+@MappedSuperclass
 public class BaseEntity {
 
     @Id

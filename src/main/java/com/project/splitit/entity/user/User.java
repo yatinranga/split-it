@@ -1,21 +1,22 @@
-package entity;
+package com.project.splitit.entity.user;
 
+import com.project.splitit.entity.common.BaseEntity;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
 
 @Entity
 @DynamicInsert(value = true)
 @DynamicUpdate(value = true)
-public class User extends BaseEntity implements UserDetails {
+public class User extends BaseEntity implements UserDetails, Serializable {
 
     @NotNull(message = "name can't be null")
     private String name;
