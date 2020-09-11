@@ -5,13 +5,14 @@ import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
+import java.io.Serializable;
 
 @SuppressWarnings("serial")
 @Entity
 @Table(name = "role_authority")
 @DynamicInsert(value = true)
 @DynamicUpdate(value = true)
-public class RoleAuthority {
+public class RoleAuthority implements Serializable {
 
     @EmbeddedId
     private RoleAuthorityKey roleAuthorityKey;

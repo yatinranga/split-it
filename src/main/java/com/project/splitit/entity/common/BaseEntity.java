@@ -1,10 +1,14 @@
 package com.project.splitit.entity.common;
 
 import com.project.splitit.entity.user.User;
+import com.project.splitit.service.BaseService;
+import com.project.splitit.util.DateUtil;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
+
+import static com.project.splitit.service.BaseService.getUser;
 
 @MappedSuperclass
 public class BaseEntity {
@@ -31,6 +35,50 @@ public class BaseEntity {
     @NotNull
     @Column(name = "active", columnDefinition = "boolean default true")
     private Boolean active = true;
+
+    /**
+     * this method will work whenever we call save method in repository. It will set
+     * following property
+     *
+     * <ul>
+     * <li>createdAt to current date and time</li>
+     * <li>active default value (true)</li>
+     * <li>createdBy to whoever user is login it will set according to that</li>
+     * </ul>
+     *
+     */
+    @PrePersist
+    protected void prePersist() {
+        this.createdAt = DateUtil.today();
+        this.active = true;
+        Long userId;
+        if ((userId = BaseService.getUserId()) != null) {
+            this.createdBy = new User();
+            this.createdBy.setId(userId);
+        }
+    }
+
+    /**
+     * this method will work whenever we call update method in repository. It will
+     * set following property
+     *
+     * <ul>
+     * <li>createdAt to current date and time</li>
+     * <li>active default value (true)</li>
+     * <li>createdBy to whoever user is login it will set according to that</li>
+     * </ul>
+     *
+     */
+    @PreUpdate
+    protected void preUpdate() {
+        this.modifiedAt = new Date();
+        this.active = true;
+        Long userId;
+        if ((userId = getUser().getUserId()) != null) {
+            this.modifiedBy = new User();
+            this.modifiedBy.setId(userId);
+        }
+    }
 
     public Long getId() {
         return id;
