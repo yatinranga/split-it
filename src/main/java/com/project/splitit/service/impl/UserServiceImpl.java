@@ -7,16 +7,22 @@ import com.project.splitit.dao.jpa.UserJpaDao;
 import com.project.splitit.entity.common.RoleAuthorityKey;
 import com.project.splitit.entity.common.UserRoleKey;
 import com.project.splitit.entity.user.*;
+import com.project.splitit.ex.ValidationException;
 import com.project.splitit.service.UserService;
+import com.project.splitit.util.AuthorityUtils;
+import com.project.splitit.view.user.UserRequest;
+import com.project.splitit.view.user.UserResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import javax.annotation.PostConstruct;
 import javax.transaction.Transactional;
@@ -86,4 +92,50 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         user.setRoles(roles);
         return user;
     }
+
+    /**
+     * this method used to validate role ids that these role ids exist in database
+     *
+     * @param requestRoleIds
+     */
+    private void validateRoleIds(Set<Long> requestRoleIds) {
+        List<Long> roleIds = roleDao.getAllIdsByActive(true);
+        if (!roleIds.containsAll(requestRoleIds)) {
+            requestRoleIds.removeAll(roleIds);
+            throw new ValidationException(String.format("Some of the roles (%s) are not valid or not active",
+                    StringUtils.arrayToCommaDelimitedString(requestRoleIds.toArray())));
+
+        }
+    }
+
+    /**
+     * this method used to validate user request like username already exist or not
+     *
+     * @param request
+     */
+    private void validate(UserRequest request) {
+        if(request== null){
+            throw new ValidationException("request can't be null");
+        }
+        if(userJpaDao.existByUserame(request.getUsername())){
+            throw new ValidationException(String.format("This user %s already exist",request.getUsername()));
+        }else if(userJpaDao.findIdByEmailAndActive(request.getEmail(),true) != null){
+            throw new ValidationException(String.format("This user's email %s already exist",request.getEmail()));
+        }
+
+        validateRoleIds(request.getRoleIds());
+
+    }
+
+    @Override
+    @Secured(AuthorityUtils.USER_CREATE)
+    public UserResponse save(UserRequest request) {
+        validate(request);
+        User user = request.toEntity();
+        user.setPassword(userPasswordEncoder.encode("12345"));
+        user = userJpaDao.save(user);
+        return null;
+    }
+
+
 }
