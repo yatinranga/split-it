@@ -4,6 +4,7 @@ import com.project.splitit.entity.user.Role;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
+import java.util.List;
 import java.util.Set;
 
 public interface RoleJpaDao extends JpaRepository<Role,Long> {
@@ -12,4 +13,6 @@ public interface RoleJpaDao extends JpaRepository<Role,Long> {
     public  Set<Long> findIdsByName(String name);
 
     public Role findByName(String name);
+
+    List<Long> getAllIdsByActive(boolean b);
 }
