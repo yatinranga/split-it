@@ -71,7 +71,12 @@ public class RoleServiceImpl extends BaseService implements RoleService {
 
     @Override
     public List<RoleResponse> getAllRoles() {
-        roleDao.find
-        return null;
+        List<RoleResponse> response = new ArrayList<>();
+        roleDao.findAll().stream().forEach(role -> response.add(new RoleResponse(role.getId(),role.getName(),role.getActive())));
+        response.stream().map(role -> {
+            role.setAuthorities(authorityDao.findByAuthorityRolesRoleId(unmask(role.getId())));
+            return role;
+        }).collect(Collectors.toList());
+        return response;
     }
 }
