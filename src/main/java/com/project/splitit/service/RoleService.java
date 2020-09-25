@@ -10,4 +10,6 @@ public interface RoleService {
     public RoleResponse save(RoleRequest request);
 
     public List<RoleResponse> getAllRoles();
+
+    public RoleResponse getRole(Long id);
 }

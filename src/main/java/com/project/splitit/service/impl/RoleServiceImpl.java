@@ -5,6 +5,7 @@ import com.project.splitit.dao.jpa.RoleAuthorityJpaDao;
 import com.project.splitit.dao.jpa.RoleJpaDao;
 import com.project.splitit.entity.user.Role;
 import com.project.splitit.entity.user.RoleAuthority;
+import com.project.splitit.ex.NotFoundException;
 import com.project.splitit.ex.ValidationException;
 import com.project.splitit.service.BaseService;
 import com.project.splitit.service.RoleService;
@@ -77,6 +78,20 @@ public class RoleServiceImpl extends BaseService implements RoleService {
             role.setAuthorities(authorityDao.findByAuthorityRolesRoleId(unmask(role.getId())));
             return role;
         }).collect(Collectors.toList());
+        return response;
+    }
+
+    @Override
+    public RoleResponse getRole(Long id) {
+
+        if(id == null){
+            throw new ValidationException(String.format("role id can't be null"));
+        }
+        RoleResponse response = roleDao.findResponseById(unmask(id));
+        if(response == null){
+            throw new NotFoundException(String.format("role having id %s didn't exist",id));
+        }
+        response.setAuthorities(authorityDao.findByAuthorityRolesRoleId(unmask(id)));
         return response;
     }
 }
