@@ -18,17 +18,17 @@ public class RoleController {
 
 
     @PostMapping("role")
-    public RoleResponse save(@Valid @RequestBody RoleRequest request){
+    public RoleResponse save(@Valid @RequestBody RoleRequest request) {
         return roleService.save(request);
     }
 
     @GetMapping("roles")
-    public List<RoleResponse> getAllRoles(){
+    public List<RoleResponse> getAllRoles() {
         return roleService.getAllRoles();
     }
 
     @GetMapping("role/{id}")
-    public RoleResponse getRole(@PathVariable Long id){
+    public RoleResponse getRole(@PathVariable Long id) {
         return roleService.getRole(id);
     }
 }

@@ -43,8 +43,8 @@ public class UserRequest implements Request {
     }
 
     public Set<Long> getRoleIds() {
-        if(roleIds!=null){
-            return roleIds.stream().map(id->unmask(id)).collect(Collectors.toSet());
+        if (roleIds != null) {
+            return roleIds.stream().map(id -> unmask(id)).collect(Collectors.toSet());
         }
         return roleIds;
     }

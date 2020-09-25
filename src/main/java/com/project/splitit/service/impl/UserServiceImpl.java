@@ -1,15 +1,13 @@
 package com.project.splitit.service.impl;
 
-import com.project.splitit.dao.jpa.AuthorityJpaDao;
-import com.project.splitit.dao.jpa.RoleAuthorityJpaDao;
-import com.project.splitit.dao.jpa.RoleJpaDao;
-import com.project.splitit.dao.jpa.UserJpaDao;
+import com.project.splitit.dao.jpa.*;
 import com.project.splitit.entity.common.RoleAuthorityKey;
 import com.project.splitit.entity.common.UserRoleKey;
 import com.project.splitit.entity.user.*;
 import com.project.splitit.ex.ValidationException;
 import com.project.splitit.service.UserService;
 import com.project.splitit.util.AuthorityUtils;
+import com.project.splitit.view.RoleResponse;
 import com.project.splitit.view.user.UserRequest;
 import com.project.splitit.view.user.UserResponse;
 import org.slf4j.Logger;
@@ -35,9 +33,9 @@ import java.util.Set;
 @Transactional
 public class UserServiceImpl implements UserService, UserDetailsService {
 
-    private static Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
 
-    private static PasswordEncoder userPasswordEncoder = new BCryptPasswordEncoder();
+    private static final PasswordEncoder userPasswordEncoder = new BCryptPasswordEncoder();
 
     @Autowired
     private RoleJpaDao roleDao;
@@ -50,6 +48,9 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     @Autowired
     private UserJpaDao userJpaDao;
+
+    @Autowired
+    private UserRoleJpaDao userRoleJpa;
 
     @PostConstruct
     public void init() {
@@ -109,32 +110,48 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     }
 
     /**
-     * this method used to validate user request like username already exist or not
+     * this method used to validate user request like username already exist
      *
      * @param request
      */
     private void validate(UserRequest request) {
-        if(request== null){
+        if (request == null) {
             throw new ValidationException("request can't be null");
         }
-        if(userJpaDao.existsByUsername(request.getUsername())){
-            throw new ValidationException(String.format("This user %s already exist",request.getUsername()));
-        }else if(userJpaDao.findIdByEmailAndActive(request.getEmail(),true) != null){
-            throw new ValidationException(String.format("This user's email %s already exist",request.getEmail()));
+        if (userJpaDao.existsByUsername(request.getUsername())) {
+            throw new ValidationException(String.format("Username %s already exist", request.getUsername()));
+        } else if (userJpaDao.findIdByEmailAndActive(request.getEmail(), true) != null) {
+            throw new ValidationException(String.format("user's email %s already exist", request.getEmail()));
         }
 
         validateRoleIds(request.getRoleIds());
 
     }
 
+    private UserResponse fetch(User user, Set<Long> roleIds) {
+        UserResponse response = UserResponse.get(user);
+        response.setRoles(new HashSet<>());
+        RoleResponse roleResponse;
+        for (Long roleId : roleIds) {
+            roleResponse = roleDao.findResponseById(roleId);
+            roleResponse.setAuthorities(authorityDao.findByAuthorityRolesRoleId(roleId));
+            response.getRoles().add(roleResponse);
+        }
+        return response;
+    }
+
     @Override
     @Secured(AuthorityUtils.USER_CREATE)
     public UserResponse save(UserRequest request) {
-//        validate(request);
-//        User user = request.toEntity();
-//        user.setPassword(userPasswordEncoder.encode("12345"));
-//        user = userJpaDao.save(user);
-        return null;
+        validate(request);
+        User user = request.toEntity();
+        user.setPassword(userPasswordEncoder.encode("12345"));
+        user = userJpaDao.save(user);
+
+        for (Long roleId : request.getRoleIds()) {
+            userRoleJpa.save(user.getId(), roleId);
+        }
+        return fetch(user, request.getRoleIds());
     }
 
 

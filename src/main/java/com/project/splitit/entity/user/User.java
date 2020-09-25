@@ -16,6 +16,7 @@ import java.util.List;
 @Entity
 @DynamicInsert(value = true)
 @DynamicUpdate(value = true)
+@Table(name = "user", uniqueConstraints = {@UniqueConstraint(columnNames = {"username"})})
 public class User extends BaseEntity implements UserDetails, Serializable {
 
     @NotNull(message = "name can't be null")
@@ -30,7 +31,7 @@ public class User extends BaseEntity implements UserDetails, Serializable {
     @NotNull(message = "password can't be null")
     private String password;
 
-    private Boolean active;
+    //private Boolean active;
 
     private String generatedPassword;
 
@@ -97,9 +98,17 @@ public class User extends BaseEntity implements UserDetails, Serializable {
         return username;
     }
 
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
     @Override
     public String getPassword() {
         return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     @Override
@@ -107,9 +116,17 @@ public class User extends BaseEntity implements UserDetails, Serializable {
         return enabled;
     }
 
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
+
     @Override
     public Collection<Authority> getAuthorities() {
         return authorities;
+    }
+
+    public void setAuthorities(Collection<Authority> authorities) {
+        this.authorities = authorities;
     }
 
     public String getName() {
@@ -168,28 +185,12 @@ public class User extends BaseEntity implements UserDetails, Serializable {
         this.credentialsExpired = credentialsExpired;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
-    }
-
     public String getGeneratedPassword() {
         return generatedPassword;
     }
 
     public void setGeneratedPassword(String generatedPassword) {
         this.generatedPassword = generatedPassword;
-    }
-
-    public void setAuthorities(Collection<Authority> authorities) {
-        this.authorities = authorities;
     }
 
     @Override
@@ -215,13 +216,13 @@ public class User extends BaseEntity implements UserDetails, Serializable {
         this.userRoles = userRoles;
     }
 
-    public Boolean getActive() {
-        return active;
-    }
-
-    public void setActive(Boolean active) {
-        this.active = active;
-    }
+//    public Boolean getActive() {
+//        return active;
+//    }
+//
+//    public void setActive(Boolean active) {
+//        this.active = active;
+//    }
 
     public Long getUserId() {
         return userId;

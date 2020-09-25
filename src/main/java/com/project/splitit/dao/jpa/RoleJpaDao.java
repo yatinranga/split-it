@@ -10,16 +10,19 @@ import java.util.List;
 import java.util.Set;
 
 @Repository
-public interface RoleJpaDao extends JpaRepository<Role,Long> {
+public interface RoleJpaDao extends JpaRepository<Role, Long> {
 
     @Query(value = "select id from role where name=?1", nativeQuery = true)
-    public  Set<Long> findIdsByName(String name);
+    Set<Long> findIdsByName(String name);
 
-    public Role findByName(String name);
+    Role findByName(String name);
 
-    public List<Long> getAllIdsByActive(boolean b);
+    @Query(value = "select id from Role where active=?1")
+    List<Long> getAllIdsByActive(boolean active);
 
-    public Boolean existsByName(String name);
+    Boolean existsByName(String name);
 
-    public RoleResponse findResponseById(Long id);
+    RoleResponse findResponseById(Long id);
+
+    Long findIdByName(String customer);
 }

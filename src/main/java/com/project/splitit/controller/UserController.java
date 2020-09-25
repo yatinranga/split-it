@@ -19,7 +19,7 @@ public class UserController {
     UserService userService;
 
     @PostMapping("user")
-    public UserResponse save(@Valid @RequestBody UserRequest request){
+    public UserResponse save(@Valid @RequestBody UserRequest request) {
         return userService.save(request);
     }
 
