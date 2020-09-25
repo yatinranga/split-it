@@ -5,6 +5,7 @@ import com.project.splitit.entity.common.RoleAuthorityKey;
 import com.project.splitit.entity.common.UserRoleKey;
 import com.project.splitit.entity.user.*;
 import com.project.splitit.ex.ValidationException;
+import com.project.splitit.service.BaseService;
 import com.project.splitit.service.UserService;
 import com.project.splitit.util.AuthorityUtils;
 import com.project.splitit.view.RoleResponse;
@@ -31,7 +32,7 @@ import java.util.Set;
 
 @Service("userService")
 @Transactional
-public class UserServiceImpl implements UserService, UserDetailsService {
+public class UserServiceImpl extends BaseService implements UserService, UserDetailsService {
 
     private static final Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
 
@@ -152,6 +153,20 @@ public class UserServiceImpl implements UserService, UserDetailsService {
             userRoleJpa.save(user.getId(), roleId);
         }
         return fetch(user, request.getRoleIds());
+    }
+
+    @Override
+    public UserResponse findById(Long id) {
+        if (id == null) {
+            throw new ValidationException(String.format("user id can't be null"));
+        }
+        long unmaskId = unmask(id);
+        UserResponse response = userJpaDao.findByIdAndActiveTrue(unmaskId);
+        response.setRoles(roleDao.findByRoleUsersUserId(unmaskId));
+        for (RoleResponse role : response.getRoles()) {
+            role.setAuthorities(authorityDao.findByAuthorityRolesRoleId(unmask(role.getId())));
+        }
+        return response;
     }
 
 

@@ -25,4 +25,6 @@ public interface RoleJpaDao extends JpaRepository<Role, Long> {
     RoleResponse findResponseById(Long id);
 
     Long findIdByName(String customer);
+
+    Set<RoleResponse> findByRoleUsersUserId(long unmaskId);
 }

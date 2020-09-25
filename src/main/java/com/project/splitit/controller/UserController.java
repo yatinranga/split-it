@@ -4,10 +4,7 @@ import com.project.splitit.service.UserService;
 import com.project.splitit.view.user.UserRequest;
 import com.project.splitit.view.user.UserResponse;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
@@ -23,4 +20,8 @@ public class UserController {
         return userService.save(request);
     }
 
+    @GetMapping("user/{id}")
+    public UserResponse getUser(@PathVariable Long id) {
+        return userService.findById(id);
+    }
 }
