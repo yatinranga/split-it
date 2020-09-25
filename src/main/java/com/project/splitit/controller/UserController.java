@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
+
 @RestController
 @RequestMapping("/api/")
 public class UserController {
@@ -16,8 +18,8 @@ public class UserController {
     @Autowired
     UserService userService;
 
-    @PostMapping("save")
-    public UserResponse save(@RequestBody UserRequest request){
+    @PostMapping("user")
+    public UserResponse save(@Valid @RequestBody UserRequest request){
         return userService.save(request);
     }
 

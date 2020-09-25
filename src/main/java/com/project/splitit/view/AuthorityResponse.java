@@ -10,6 +10,9 @@ public class AuthorityResponse implements Response{
     public String name;
     public String description;
 
+    public AuthorityResponse() {
+    }
+
     public AuthorityResponse(Authority authority) {
         if (authority != null) {
             this.id = authority.getId();

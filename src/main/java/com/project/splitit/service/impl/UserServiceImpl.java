@@ -117,7 +117,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         if(request== null){
             throw new ValidationException("request can't be null");
         }
-        if(userJpaDao.existByUserame(request.getUsername())){
+        if(userJpaDao.existsByUsername(request.getUsername())){
             throw new ValidationException(String.format("This user %s already exist",request.getUsername()));
         }else if(userJpaDao.findIdByEmailAndActive(request.getEmail(),true) != null){
             throw new ValidationException(String.format("This user's email %s already exist",request.getEmail()));
@@ -130,10 +130,10 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     @Override
     @Secured(AuthorityUtils.USER_CREATE)
     public UserResponse save(UserRequest request) {
-        validate(request);
-        User user = request.toEntity();
-        user.setPassword(userPasswordEncoder.encode("12345"));
-        user = userJpaDao.save(user);
+//        validate(request);
+//        User user = request.toEntity();
+//        user.setPassword(userPasswordEncoder.encode("12345"));
+//        user = userJpaDao.save(user);
         return null;
     }
 
