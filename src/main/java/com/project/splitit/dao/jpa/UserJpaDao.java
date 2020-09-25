@@ -16,5 +16,5 @@ public interface UserJpaDao extends JpaRepository<User, Long> {
     @Query(value = "select id from User where  email = ?1 and active = ?2")
     Long findIdByEmailAndActive(String email, Boolean active);
 
-    UserResponse findByIdAndActiveTrue(long unmaskId);
+    UserResponse findResponseById(long unmaskId);
 }

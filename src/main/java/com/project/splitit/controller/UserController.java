@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/")
@@ -21,7 +22,12 @@ public class UserController {
     }
 
     @GetMapping("user/{id}")
-    public UserResponse getUser(@PathVariable Long id) {
+    public UserResponse findById(@PathVariable Long id) {
         return userService.findById(id);
+    }
+
+    @GetMapping("users")
+    public List<UserResponse> findAll() {
+        return userService.findAll();
     }
 }

@@ -23,8 +23,6 @@ public class UserResponse implements Response {
     private Set<RoleResponse> roles;
     private Set<AuthorityResponse> authorities;
 
-    public UserResponse() {
-    }
 
     public UserResponse(Long id, String name, Boolean active, String username, String email,
                         String contactNo) {

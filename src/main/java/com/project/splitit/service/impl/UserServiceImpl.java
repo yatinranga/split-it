@@ -8,6 +8,7 @@ import com.project.splitit.ex.ValidationException;
 import com.project.splitit.service.BaseService;
 import com.project.splitit.service.UserService;
 import com.project.splitit.util.AuthorityUtils;
+import com.project.splitit.view.AuthorityResponse;
 import com.project.splitit.view.RoleResponse;
 import com.project.splitit.view.user.UserRequest;
 import com.project.splitit.view.user.UserResponse;
@@ -25,10 +26,7 @@ import org.springframework.util.StringUtils;
 
 import javax.annotation.PostConstruct;
 import javax.transaction.Transactional;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Service("userService")
 @Transactional
@@ -161,12 +159,33 @@ public class UserServiceImpl extends BaseService implements UserService, UserDet
             throw new ValidationException(String.format("user id can't be null"));
         }
         long unmaskId = unmask(id);
-        UserResponse response = userJpaDao.findByIdAndActiveTrue(unmaskId);
+        UserResponse response = userJpaDao.findResponseById(unmaskId);
         response.setRoles(roleDao.findByRoleUsersUserId(unmaskId));
         for (RoleResponse role : response.getRoles()) {
             role.setAuthorities(authorityDao.findByAuthorityRolesRoleId(unmask(role.getId())));
         }
         return response;
+    }
+
+    @Override
+    public List<UserResponse> findAll() {
+        List<UserResponse> userResponseList = new ArrayList<>();
+        userJpaDao.findAll().stream().forEach(user -> userResponseList.add(new UserResponse(user.getId(), user.getName(), user.getActive(), user.getUsername(), user.getEmail(), user.getContactNo())));
+        //fetching all roles
+        List<Long> roleIds = roleDao.getAllIdsByActive(true);
+        //creating map of role and its authorities
+        Map<Long, List<AuthorityResponse>> roleAuthoritiesMap = new HashMap<>();
+        for (Long roleId : roleIds) {
+            roleAuthoritiesMap.put(roleId, authorityDao.findByAuthorityRolesRoleId(roleId));
+        }
+        //looping over userResponse list, setting roles, looping over user roles and setting the authorities
+        for (UserResponse user : userResponseList) {
+            user.setRoles(roleDao.findByRoleUsersUserId(unmask(user.getId())));
+            for (RoleResponse role : user.getRoles()) {
+                role.setAuthorities(roleAuthoritiesMap.get(unmask(role.getId())));
+            }
+        }
+        return userResponseList;
     }
 
 
