@@ -4,6 +4,7 @@ import com.project.splitit.dao.jpa.*;
 import com.project.splitit.entity.common.RoleAuthorityKey;
 import com.project.splitit.entity.common.UserRoleKey;
 import com.project.splitit.entity.user.*;
+import com.project.splitit.ex.NotFoundException;
 import com.project.splitit.ex.ValidationException;
 import com.project.splitit.service.BaseService;
 import com.project.splitit.service.UserService;
@@ -185,6 +186,20 @@ public class UserServiceImpl extends BaseService implements UserService, UserDet
                 role.setAuthorities(roleAuthoritiesMap.get(unmask(role.getId())));
             }
         }
+        return userResponseList;
+    }
+
+    @Override
+    public List<UserResponse> findAllUsersByRoleId(Long roleId) {
+        if (roleId == null) {
+            throw new ValidationException("role id can't be null");
+        }
+        Long unmaskRoleId = unmask(roleId);
+        if (!roleDao.existsById(unmaskRoleId)) {
+            throw new NotFoundException(String.format("role having id %s didn't exist", roleId));
+        }
+
+        List<UserResponse> userResponseList = userJpaDao.findByUserRolesRoleId(unmaskRoleId);
         return userResponseList;
     }
 

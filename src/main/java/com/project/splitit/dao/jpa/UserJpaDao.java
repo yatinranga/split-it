@@ -6,6 +6,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public interface UserJpaDao extends JpaRepository<User, Long> {
 
@@ -17,4 +19,6 @@ public interface UserJpaDao extends JpaRepository<User, Long> {
     Long findIdByEmailAndActive(String email, Boolean active);
 
     UserResponse findResponseById(long unmaskId);
+
+    List<UserResponse> findByUserRolesRoleId(Long unmaskRoleId);
 }

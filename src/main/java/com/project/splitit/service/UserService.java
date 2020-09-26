@@ -11,4 +11,6 @@ public interface UserService {
     UserResponse findById(Long id);
 
     List<UserResponse> findAll();
+
+    List<UserResponse> findAllUsersByRoleId(Long roleId);
 }

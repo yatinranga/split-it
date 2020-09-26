@@ -30,4 +30,10 @@ public class UserController {
     public List<UserResponse> findAll() {
         return userService.findAll();
     }
+
+
+    @GetMapping("users/{roleId}")
+    public List<UserResponse> findAllUsersByRoleId(@PathVariable Long roleId) {
+        return userService.findAllUsersByRoleId(roleId);
+    }
 }
