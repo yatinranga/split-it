@@ -11,11 +11,13 @@ import com.project.splitit.service.UserService;
 import com.project.splitit.util.AuthorityUtils;
 import com.project.splitit.view.AuthorityResponse;
 import com.project.splitit.view.RoleResponse;
+import com.project.splitit.view.SuccessResponse;
 import com.project.splitit.view.user.UserRequest;
 import com.project.splitit.view.user.UserResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -201,6 +203,35 @@ public class UserServiceImpl extends BaseService implements UserService, UserDet
 
         List<UserResponse> userResponseList = userJpaDao.findByUserRolesRoleId(unmaskRoleId);
         return userResponseList;
+    }
+
+    @Override
+    public SuccessResponse forgotPassword(String username) {
+        if (!username.matches("^[@A-Za-z0-9_]{3,20}$")) {
+            throw new ValidationException(String.format("Incorrect username [%s]", username));
+        }
+        Map<String, String> response = userJpaDao.findEmailAndContactByUsername(username);
+        if (response == null) {
+            throw new NotFoundException(String.format("user[username-%s] not found", username));
+        }
+        if (response.get("email") == null && response.get("contactNo") == null) {
+            throw new ValidationException("User email/contact not register with us");
+        }
+
+        String generatedPassword = UUID.randomUUID().toString().substring(0, 6);
+//        try {
+//            MailUtil.sendEmail(sendGripApiKey, fromEmailId, response.get("email").toString(), new ArrayList<>(),
+//                    "Forgot password",
+//                    new Content("text/plain", "Temporary generated password is :" + generatedPassword));
+//        } catch (IOException e) {
+//            throw new ValidationException("Couldn't send email to customer");
+//        }
+
+        logger.info("Password {} has been sent to email {}/contact {}", generatedPassword, response.get("email"),
+                response.get("contactNo"));
+
+        userJpaDao.setGeneratedPassword(username, userPasswordEncoder.encode(generatedPassword));
+        return new SuccessResponse(HttpStatus.OK.value(), "New generated password has been sent to your email and contact number");
     }
 
 
