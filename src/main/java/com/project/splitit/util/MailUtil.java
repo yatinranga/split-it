@@ -16,6 +16,7 @@ import java.util.List;
 
 public class MailUtil {
 
+    // for single To and multiple CC
     public static SuccessResponse sendEmail(String senderGridAPIKey, String fromEmailId, String toEmailId,
                                             List<String> ccEmailIds, String subject, Content content) throws IOException {
         Email from = new Email(fromEmailId);
@@ -43,6 +44,7 @@ public class MailUtil {
 
     }
 
+    // for multiple TO and multiple CC
     public static SuccessResponse sendEmail(String senderGridAPIKey, String fromEmailId, List<String> toEmailIds,
                                             List<String> ccEmailIds, String subject, Content content) throws IOException {
         Email from = new Email(fromEmailId);

@@ -39,16 +39,12 @@ import java.util.*;
 @Transactional
 public class UserServiceImpl extends BaseService implements UserService, UserDetailsService {
 
+    private static final Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
+    private static final PasswordEncoder userPasswordEncoder = new BCryptPasswordEncoder();
     @Value("${sendgrid.api-key}")
     private String sendGripApiKey;
-
     @Value("${sendgrid.sender.email}")
     private String fromEmailId;
-
-    private static final Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
-
-    private static final PasswordEncoder userPasswordEncoder = new BCryptPasswordEncoder();
-
     @Autowired
     private RoleJpaDao roleDao;
 
@@ -163,6 +159,13 @@ public class UserServiceImpl extends BaseService implements UserService, UserDet
         for (Long roleId : request.getRoleIds()) {
             userRoleJpa.save(user.getId(), roleId);
         }
+        try {
+            MailUtil.sendEmail(sendGripApiKey, fromEmailId, user.getEmail(), new ArrayList<>(),
+                    "Thank you for SignUp",
+                    new Content("text/plain", "Thank you for registering with split-it your default password is  :" + 12345));
+        } catch (IOException e) {
+            throw new ValidationException("Couldn't send email to customer");
+        }
         return fetch(user, request.getRoleIds());
     }
 
@@ -230,7 +233,7 @@ public class UserServiceImpl extends BaseService implements UserService, UserDet
 
         String generatedPassword = UUID.randomUUID().toString().substring(0, 6);
         try {
-            MailUtil.sendEmail(sendGripApiKey, fromEmailId, response.get("email").toString(), new ArrayList<>(),
+            MailUtil.sendEmail(sendGripApiKey, fromEmailId, response.get("email"), new ArrayList<>(),
                     "Forgot password",
                     new Content("text/plain", "Temporary generated password is :" + generatedPassword));
         } catch (IOException e) {
